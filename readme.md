@@ -253,12 +253,12 @@ values easily without consuming valuable CPU processing time.
 
 Now that you have a general understanding of the system you will address the "nuts and bolts" of getting the system constructed. Video systems built with _gstreamer_ are built using **pipelines**, which are strings of processing elements, each one of which performs a particular function. Many functions and interfaces are available, but the details of gstreamer are beyond the scope of this lab. Suffice it to say that we will be building a pipeline with the topology indicated in the following figure:
 
-![Missing Image: Gstreamer](./images/gstreamer.png)
+![Missing Image: Gstreamer](./images/gstreamer.PNG)
 
 Each block in the prior figure will be implemented with a pre-compiled **shared object file**, or **.so**, that defines the interfaces, block behavior, etc. There are many topologies you can implement with SDSoC, but you will implement something like the following where both the UYVY to RGB and DPU functions call into a single hardware-accelerated library. This isolates, to the degree possible, the hardware
 implementation from the _gstreamer_ implementation. Your full topology will look like the following figure: 
 
-![Missing Image: Gstreamer](./images/gstreamer_full.png)
+![Missing Image: Gstreamer](./images/gstreamer_full.PNG)
 
 Now that you have a general understanding of the IPs you want to create
 and their interfaces, it's time to package them up in a meaningful way
