@@ -140,13 +140,13 @@ Open a new terminal as shown in the following figure:
 ---------------------
 
 All design files for this lab exist under the the
-**\~/XDF\_Labs/SDSoC/** directory on the AWS AMI you were assigned.
+**\~/XDF_Labs/SDSoC/** directory on the AWS AMI you were assigned.
 
 Under this top-level source directory you will find four primary
-directories: **lab\_files**, **platform**, **workspace**, and
+directories: **lab_files**, **platform**, **workspace**, and
 **solution**. 
 
-- The **lab\_files** directory contains the source files you
+- The **lab_files** directory contains the source files you
 will import to begin working on the lab. 
 - The **platform** directory contains all of the files necessary to target the Ultra96 board with SDSoC, including the contents of the root file system needed for
 cross-compiling the gstreamer plugins. 
@@ -263,7 +263,7 @@ implementation from the _gstreamer_ implementation. Your full topology will look
 Now that you have a general understanding of the IPs you want to create
 and their interfaces, it's time to package them up in a meaningful way
 for use in SDSoC. You  will create a single library,
-**libdpucore130\_1152.so**, that contains both the DPU C-Callable IP
+**libdpucore130_1152.so**, that contains both the DPU C-Callable IP
 library functions and the hardware-accelerated pixel format conversion
 function. This library will consume the **libdpu.a** library which
 contains the DPU IP (and this is the general SDSoC flow for embedded
@@ -325,10 +325,10 @@ tab and select the "Existing Projects into Workspace" option and click "Next", a
 
 With the "Select root directory" radio button selected browse to the directory:
 
-    /home/ubuntu/XDF\_Labs/SDSoC/lab\_files
+    /home/ubuntu/XDF_Labs/SDSoC/lab_files
 
 Ensure that the following projects are selected:
-- dpucore130\_1152
+- dpucore130_1152
 - gstsdxfacedetect
 - gstsdxpedestriandetect
 - gstsdxuyvy2rgb
@@ -346,7 +346,7 @@ Note that two directories have been pre-installed into the workspace that do not
 
 ### Working in the dpucore130 Project 
 
-In the SDx GUI, expand the **dpucore130\_1152** project (if it isn't
+In the SDx GUI, expand the **dpucore130_1152** project (if it isn't
 already) and double click on the **project.sdx** file to open it.
 
 The dpucore library includes the DPU and its associated software by
@@ -354,10 +354,10 @@ default, but you now need to add your UYVY to RGB function.
 
 1. Right click on the 'src' folder and select **Import**, then **General** $\rightarrow$ **File System**. 
    
-2. Browse to the directory **/home/ubuntu/XDF\_Labs/SDSoC/lab\_files/template** and select the file **uyvy2rgb.cpp**, importing it into the **src** folder of the DPU library.
+2. Browse to the directory **/home/ubuntu/XDF_Labs/SDSoC/lab_files/template** and select the file **uyvy2rgb.cpp**, importing it into the **src** folder of the DPU library.
 
 3. Open the file by double clicking on it. 
-   Note that it contains the function to accelerate your UYVY to RGB conversion, called *uyvy2rgb\_accel*. However, also note the TODO notice at the bottom. Every accelerated function in SDSoC must have one (or more) **call sites**. In other words, it can't be accelerated in a vacuum, it must be called by something. Add a wrapper around that function (*hint: this is just the same function with a different name, passing its data directly to the uyvy2rgb\_accel function*). Something like:  
+   Note that it contains the function to accelerate your UYVY to RGB conversion, called *uyvy2rgb_accel*. However, also note the TODO notice at the bottom. Every accelerated function in SDSoC must have one (or more) **call sites**. In other words, it can't be accelerated in a vacuum, it must be called by something. Add a wrapper around that function (*hint: this is just the same function with a different name, passing its data directly to the uyvy2rgb_accel function*). Something like:  
 
 ``` {.c frame="lines" framesep="2mm"}
 // Caller for the conversion function
@@ -384,7 +384,7 @@ void uyvy2rgb(uyvy_data *uyvy,
 
 7. Click the hammer icon (build) in the toolbar menu to start the build process.
 
-    This will take some time to complete. When it's done you will have a file **libdpucore130\_1152.so** that contains the software API to communicate with the DPU, along with your hardware-accelerated color conversion function. You  can now link the other libraries against it.
+    This will take some time to complete. When it's done you will have a file **libdpucore130_1152.so** that contains the software API to communicate with the DPU, along with your hardware-accelerated color conversion function. You  can now link the other libraries against it.
 
 **NOTE:** AWS resources are shared with other AWS users in the data
 center, including elastic block storage (EBS). Processes running over
