@@ -51,8 +51,8 @@ user name, and password for a unique AWS AMI. If you don't have it, or
 have lost it, please raise your hand and ask one of the lab assistants
 for help.
 
-Begin by using your web browser to the following URL:
-https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:tag:Name=\<your IAM user name\>;sort=tag:Name
+Begin by using your web browser to open the following URL:
+console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:tag:Name=\<your IAM user name\>;sort=tag:Name
 
 For example, if your user name is "user7", the correct URL would be:
 https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:tag:Name=User7;sort=tag:Name
