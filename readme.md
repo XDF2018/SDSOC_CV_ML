@@ -52,7 +52,7 @@ have lost it, please raise your hand and ask one of the lab assistants
 for help.
 
 Begin by using your web browser to the following URL:
-https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:tag:Name=\<your IAM user name\>;sort=tag:Name
+https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:tag:Name=\<your IAM user name>;sort=tag:Name
 
 For example, if your user name is "user7", the correct URL would be:
 https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#Instances:tag:Name=User7;sort=tag:Name
@@ -228,17 +228,17 @@ FPGA. In memory, the UYVY data is laid out as shown in the following figure, wit
 
 Because UYVY is a sparse format you can't convert pixel-by-pixel but rather using a full four-byte word (or, in other words, two pixels to two pixels). The equations for the conversion are as follows:
 
-$R_0 = 1.164 \times (Y_0 - 16) + 2.018 \times (U_0 - 128)$
+$R_0 = 1.164 * (Y_0 - 16) + 2.018 * (U_0 - 128)$
 
-$G_0 = 1.164 \times (Y_0 - 16) - 0.813 \times (V_0 - 128) - 0.391 \times (U_0 - 128)$
+$G_0 = 1.164 * (Y_0 - 16) - 0.813 * (V_0 - 128) - 0.391 * (U_0 - 128)$
 
-$B_0 = 1.164 \times (Y_0 - 16) + 1.596 \times (V_0 - 128)$
+$B_0 = 1.164 * (Y_0 - 16) + 1.596 * (V_0 - 128)$
 
-$R_1 = 1.164 \times (Y_1 - 16) + 2.018 \times (U_0 - 128)$
+$R_1 = 1.164 * (Y_1 - 16) + 2.018 * (U_0 - 128)$
 
-$G_1 = 1.164 \times (Y_1 - 16) - 0.813 \times (V_0 - 128) - 0.391 \times (U_0 - 128)$
+$G_1 = 1.164 * (Y_1 - 16) - 0.813 * (V_0 - 128) - 0.391 * (U_0 - 128)$
 
-$B_1 = 1.164 \times (Y_1 - 16) + 1.596 \times (V_0 - 128)$
+$B_1 = 1.164 * (Y_1 - 16) + 1.596 * (V_0 - 128)$
 
 This pattern repeats throughout the image, making implementation with a
 **for** loop quite simple.
@@ -295,9 +295,9 @@ From a command prompt, enter the following:
     cd ~/XDF_Labs/SDSoC/platform/aarch64-xilinx-linux
     export SYSROOT=`pwd`
 
-**NOTE:** For those unfamiliar with Linux syntax, the characters shown in the "export SYSROOT\..." line are the backtick character, typically found next to the number one on US keyboards, and are not the single quote character. 
+**NOTE:** For those unfamiliar with Linux syntax, the characters shown in the "export SYSROOT" line are the backtick character, typically found next to the number one on US keyboards, and are not the single quote character. 
 
-You will want to double check that the \$SYSROOT environment variable is
+You will want to double check that the $SYSROOT environment variable is
 set correctly as any errors here will result in compilation errors
 later. Check with the "echo" command to ensure that it is correct:
 
