@@ -1,11 +1,6 @@
 # XDF 2018 Workshop
 ## SDSoC, Computer Vision, and Machine Learning
 
-```
-"Don't Panic!"
-The Hitchhiker's Guide to the Galaxy, Douglas Adams
-```
-
 ### Introduction
 ------------
 
@@ -65,8 +60,8 @@ in the following figure:
 You will see a list of AWS instances. Select the instance associated
 with your user name, noting that there are many attendees registered for
 XDF and you may have to scoll a bit to find yours (there is a
-search/filter function available at the top of the screen to enter your user name). One you've located it click **Actions** $\rightarrow$ **Instance State**
-$\rightarrow$ **Start** as shown in the following figure: 
+search/filter function available at the top of the screen to enter your user name). One you've located it click **Actions** -\> **Instance State**
+-\> **Start** as shown in the following figure:
 
 ![AWS Instance Start](./images/aws_instances.png)
 
@@ -79,7 +74,7 @@ environment.
 
 ![AWS Instance Running with IP Address](./images/aws_ip.png)
 
-There are two ways to connect to the instance: SSH and RDP. 
+There are two ways to connect to the instance: SSH and RDP.
 
 **Note:** This lab requires the use of the SDSoC GUI, and Xilinx has found connecting through RDP to generally be more responsive than SSH tunneling and/or VNC for AWS instances. As RDP clients are available on most systems, instructions for RDP are provided here.
 
@@ -144,13 +139,13 @@ All design files for this lab exist under the the
 
 Under this top-level source directory you will find four primary
 directories: **lab_files**, **platform**, **workspace**, and
-**solution**. 
+**solution**.
 
 - The **lab_files** directory contains the source files you
-will import to begin working on the lab. 
+will import to begin working on the lab.
 - The **platform** directory contains all of the files necessary to target the Ultra96 board with SDSoC, including the contents of the root file system needed for
-cross-compiling the gstreamer plugins. 
-- The **workspace** directory is currently empty but will be used for your target workspace. 
+cross-compiling the gstreamer plugins.
+- The **workspace** directory is currently empty but will be used for your target workspace.
 - The **solution** directory contains, as its name implies, a ready-made
 solution to the lab that is complete and working. It can be used for
 reference if you get stuck on any step.
@@ -228,17 +223,17 @@ FPGA. In memory, the UYVY data is laid out as shown in the following figure, wit
 
 Because UYVY is a sparse format you can't convert pixel-by-pixel but rather using a full four-byte word (or, in other words, two pixels to two pixels). The equations for the conversion are as follows:
 
-$R_0 = 1.164 * (Y_0 - 16) + 2.018 * (U_0 - 128)$
+R_0 = 1.164 * (Y_0 - 16) + 2.018 * (U_0 - 128)
 
-$G_0 = 1.164 * (Y_0 - 16) - 0.813 * (V_0 - 128) - 0.391 * (U_0 - 128)$
+G_0 = 1.164 * (Y_0 - 16) - 0.813 * (V_0 - 128) - 0.391 * (U_0 - 128)
 
-$B_0 = 1.164 * (Y_0 - 16) + 1.596 * (V_0 - 128)$
+B_0 = 1.164 * (Y_0 - 16) + 1.596 * (V_0 - 128)
 
-$R_1 = 1.164 * (Y_1 - 16) + 2.018 * (U_0 - 128)$
+R_1 = 1.164 * (Y_1 - 16) + 2.018 * (U_0 - 128)
 
-$G_1 = 1.164 * (Y_1 - 16) - 0.813 * (V_0 - 128) - 0.391 * (U_0 - 128)$
+G_1 = 1.164 * (Y_1 - 16) - 0.813 * (V_0 - 128) - 0.391 * (U_0 - 128)
 
-$B_1 = 1.164 * (Y_1 - 16) + 1.596 * (V_0 - 128)$
+B_1 = 1.164 * (Y_1 - 16) + 1.596 * (V_0 - 128)
 
 This pattern repeats throughout the image, making implementation with a
 **for** loop quite simple.
@@ -256,7 +251,7 @@ Now that you have a general understanding of the system you will address the "nu
 ![Missing Image: Gstreamer](./images/gstreamer.PNG)
 
 Each block in the prior figure will be implemented with a pre-compiled **shared object file**, or **.so**, that defines the interfaces, block behavior, etc. There are many topologies you can implement with SDSoC, but you will implement something like the following where both the UYVY to RGB and DPU functions call into a single hardware-accelerated library. This isolates, to the degree possible, the hardware
-implementation from the _gstreamer_ implementation. Your full topology will look like the following figure: 
+implementation from the _gstreamer_ implementation. Your full topology will look like the following figure:
 
 ![Missing Image: Gstreamer](./images/gstreamer_full.PNG)
 
@@ -290,12 +285,12 @@ link against the headers, libraries, etc. that will be present on your
 target. This **sysroot** has been pre-built with the Xilinx PetaLinux
 toolchain.
 
-From a command prompt, enter the following: 
+From a command prompt, enter the following:
 
     cd ~/XDF_Labs/SDSoC/platform/aarch64-xilinx-linux
     export SYSROOT=`pwd`
 
-**NOTE:** For those unfamiliar with Linux syntax, the characters shown in the "export SYSROOT" line are the backtick character, typically found next to the number one on US keyboards, and are not the single quote character. 
+**NOTE:** For those unfamiliar with Linux syntax, the characters shown in the "export SYSROOT" line are the backtick character, typically found next to the number one on US keyboards, and are not the single quote character.
 
 You will want to double check that the $SYSROOT environment variable is
 set correctly as any errors here will result in compilation errors
@@ -304,7 +299,7 @@ later. Check with the "echo" command to ensure that it is correct:
     echo $SYSROOT
     /home/ubuntu/XDF_Labs/SDSoC/platform/aarch64-xilinx-linux
 
-### Launch SDSoC 
+### Launch SDSoC
 
 Launch the SDx development environment by running the following from the command line:
 
@@ -318,9 +313,9 @@ dialog select "Eclipse workspace or zip file" and click "Next", as shown in the 
 **NOTE:** If you have closed the initial welcome screen, you will be presented
 with a blank workspace. Right-click within the "Project Explorer" pane
 and select "Import". To launch the import wizard, expand the "General"
-tab and select the "Existing Projects into Workspace" option and click "Next", as shown in the following figure: 
+tab and select the "Existing Projects into Workspace" option and click "Next", as shown in the following figure:
 
-![SD$x$ Import Projects Dialog](./images/import_projects.png)
+![SDx Import Projects Dialog](./images/import_projects.png)
 
 
 With the "Select root directory" radio button selected browse to the directory:
@@ -336,28 +331,28 @@ Ensure that the following projects are selected:
 **NOTE:** Also ensure that the "Copy projects into workspace" option is
 selected.
 
-Your dialog should look similar to the following figure: 
+Your dialog should look similar to the following figure:
 
 ![Import Projects Dialog](./images/import_dialog.png)
 
-Click "Finish" to import all of the projects. 
+Click "Finish" to import all of the projects.
 
 Note that two directories have been pre-installed into the workspace that do not exist by default. The first, a **libs** directory, contains support libraries for gstreamer and the DNNDK that you will link against to build your application. The second, an **ipcache** directory, contains cached hardware synthesis results to help speed up your implementation run (the AMI you are using for this lab has a relatively small number of processor cores, and your lab time is short).
 
-### Working in the dpucore130 Project 
+### Working in the dpucore130 Project
 
 In the SDx GUI, expand the **dpucore130_1152** project (if it isn't
 already) and double click on the **project.sdx** file to open it.
 
 The dpucore library includes the DPU and its associated software by
-default, but you now need to add your UYVY to RGB function. 
+default, but you now need to add your UYVY to RGB function.
 
-1. Right click on the 'src' folder and select **Import**, then **General** $\rightarrow$ **File System**. 
-   
+1. Right click on the 'src' folder and select **Import**, then **General** -\> **File System**.
+
 2. Browse to the directory **/home/ubuntu/XDF_Labs/SDSoC/lab_files/template** and select the file **uyvy2rgb.cpp**, importing it into the **src** folder of the DPU library.
 
-3. Open the file by double clicking on it. 
-   Note that it contains the function to accelerate your UYVY to RGB conversion, called *uyvy2rgb_accel*. However, also note the TODO notice at the bottom. Every accelerated function in SDSoC must have one (or more) **call sites**. In other words, it can't be accelerated in a vacuum, it must be called by something. Add a wrapper around that function (*hint: this is just the same function with a different name, passing its data directly to the uyvy2rgb_accel function*). Something like:  
+3. Open the file by double clicking on it.
+   Note that it contains the function to accelerate your UYVY to RGB conversion, called *uyvy2rgb_accel*. However, also note the TODO notice at the bottom. Every accelerated function in SDSoC must have one (or more) **call sites**. In other words, it can't be accelerated in a vacuum, it must be called by something. Add a wrapper around that function (*hint: this is just the same function with a different name, passing its data directly to the uyvy2rgb_accel function*). Something like:
 
 ``` {.c frame="lines" framesep="2mm"}
 // Caller for the conversion function
@@ -367,19 +362,19 @@ void uyvy2rgb(uyvy_data *uyvy,
               int width)
 {
     uyvy2rgb_accel(uyvy, rgb, height, width);
-} 
+}
 ```
 
-4. Save the file. 
+4. Save the file.
 
-    Your last step is to tell SDx you want to move the *uyvy2rgb_accel* function to hardware. To do that, from the main project page (which can be opened by double clicking on **project.sdx**) 
+    Your last step is to tell SDx you want to move the *uyvy2rgb_accel* function to hardware. To do that, from the main project page (which can be opened by double clicking on **project.sdx**)
 
-5. Click on the lightning bolt icon (circled in the following figure) to select hardware functions to accelerate, and choose 'uyvy2rgb_accel' from the list. 
+5. Click on the lightning bolt icon (circled in the following figure) to select hardware functions to accelerate, and choose 'uyvy2rgb_accel' from the list.
 
-    Please note that when the dialog box opens the source cache is refreshed; EBS network latency can make this process take roughly 30-45 seconds so please wait a moment if the dialog box comes up with an empty list. 
-    
-6. Ensure that both the "Data motion network clock frequency" and "Clock Frequency (MHz)" settings for the accelerator are both 300 MHz, as shown in the following figure: 
-    
+    Please note that when the dialog box opens the source cache is refreshed; EBS network latency can make this process take roughly 30-45 seconds so please wait a moment if the dialog box comes up with an empty list.
+
+6. Ensure that both the "Data motion network clock frequency" and "Clock Frequency (MHz)" settings for the accelerator are both 300 MHz, as shown in the following figure:
+
 ![Accelerator Configuration](./images/accelerators.png)
 
 7. Click the hammer icon (build) in the toolbar menu to start the build process.
@@ -392,7 +387,7 @@ EBS may become I/O bound and take longer than they would on a local
 desktop machine. You  may experience longer than normal build times when
 running this lab in the cloud. To save lab time, cancel the build
 and switch your workspace to the provided workspace with
-pre-build hardware by selecting **File** $\rightarrow$ **Switch Workspace** $\rightarrow$ **Other** and browsing to it. The prebuilt workspace
+pre-build hardware by selecting **File** -\> **Switch Workspace** -\> **Other** and browsing to it. The prebuilt workspace
 is located at:
 
     ~/XDF_Lab/SDSoC/workspace_prebuilt
@@ -427,7 +422,7 @@ The project is already set up to link against the .so file you generated
 earlier, but you don't call the function in the C code. Under the 'src'
 directory of the project open the **gstsdxuyvy2rgb.cpp** file and browse
 to the TODO line (line 121). Here, call the function you defined in the
-hardware library. It should look something like the **uyvy2rgb** function in the following code sample: 
+hardware library. It should look something like the **uyvy2rgb** function in the following code sample:
 
 ``` {.c linenos="" frame="lines" framesep="2mm"}
 static GstFlowReturn
@@ -476,7 +471,7 @@ This library should also build in a matter of seconds.
 You have now built a collection of **.so** files, and a bitstream, to run on
 the board. These files need to be collected into an SD card image for
 boot. You  can collect them from each project build area into a directory
-to copy to an SD card image as follows: 
+to copy to an SD card image as follows:
 
     cd ~/XDF_Labs/SDSoC/workspace_prebuilt
     cp -r dpucore130_1152/Debug/sd_card .
@@ -522,7 +517,7 @@ Before launching your gstreamer pipeline you need to set the display to
 the desired resolution. By default the Linux kernel will auto-negotiate
 the preferred resolution of your display, which in this case is likely to
 be 1080p. For this design you want to ouput 720p. To force the resolution
-change, enter the following command on the command line. 
+change, enter the following command on the command line.
 
     modetest -M xlnx -s 38@36:1280x720-60@RG24 -w 35:alpha:1 &
 
@@ -612,7 +607,7 @@ industry, at scales from the cloud to the edge. It doesn't, howver,
 exist in a vacuum - data must be pre-processed, transformed, and
 post-processed to take advantage of neural network acceleration, and
 that processing is often computationally expensive with traditional CPU
-processing, especially in embedded devices. Xilinx SD$x$ tools are
+processing, especially in embedded devices. Xilinx SDx tools are
 uniquely suited to the task of allowing software developers to create
 the next generation of adaptable systems, iterating quickly to meet
 emerging design requirements.
