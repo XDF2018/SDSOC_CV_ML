@@ -209,7 +209,7 @@ will use:
 
 ### Theory of Operation: Pixel Format Conversion
 
-Our See3Cam camera from E-Con Systems will provide YUYV data at up to
+Our Logitech webcam will provide YUYV data at up to
 1080p resolutions, but to avoid an input scaling step you will configure
 it to provide raw YUYV data at your requested 640x480 resolution. You  then
 need to convert that data in memory to RGB data that your neural network
