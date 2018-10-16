@@ -15,7 +15,7 @@ the CPUs and FPGA fabric in Xilinx's ACAP and SoC devices, designers
 have the flexibility to adapt their hardware and platforms to achieve
 unparalleled acceleration.
 
-In this lab you will take video input from a USB3 webcam, run it through
+In this lab you will take video input from a USB webcam, run it through
 the Deep-learning Processing Unit (DPU), and detect faces in the input
 video stream using the DenseBox neural network as illustrated in the following figure. You will then output the video with an overlay
 onto a DisplayPort-connected monitor. All of this will be built
@@ -156,7 +156,7 @@ reference if you get stuck on any step.
 This lab targets an effectively empty hardware design containing only
 the clocking and reset infrastructure needed to enable the device. For
 your purposes here you will effectively ignore it as it consumes nearly no
-FPGA resources. The USB3 and DisplayPort interfaces are implemented
+FPGA resources. The USB and DisplayPort interfaces are implemented
 using the hardened IP in the Zynq UltraScale+ Processing system. You will
 interact with them using standard drivers built into the Linux kernel.
 
@@ -166,7 +166,7 @@ diagrams. In this example you have the following constraints:
 -   Your neural network has been trained on 640x480 images using the RGB
     pixel format.
 
--   Your USB3 webcam will produce raw data, and at this resolution, but
+-   Your USB webcam will produce raw data, and at this resolution, but
     in the YUV 4:2:2 pixel format.
 
 -   The DisplayPort controller in the Zynq UltraScale+ PS block requires
