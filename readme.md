@@ -180,7 +180,7 @@ you will work on the "real" block diagram shown in the following figure:
 ![Missing Image: Detailed Block Design](./images/detail_bd.png)
 
 In this example design you will implement the three blocks not composed
-of hard silicon (UYVY to RGB conversion, the DPU, and video scaling)
+of hard silicon (YUYV to RGB conversion, the DPU, and video scaling)
 with a mix of accelerated hardware functions and software functions
 using the SDSoC tool.
 
@@ -196,7 +196,7 @@ will use:
     interact with the library, and the relevant portions of the hardware
     functionality are automatically accelerated using the FPGA fabric.
 
--   To convert from YUV 4:2:2 (hereinafter referred to as UYVY) to RGB
+-   To convert from YUV 4:2:2 (hereinafter referred to as YUYV) to RGB
     you will use a standard C++ function accelerated into the FPGA
     fabric.
 
@@ -209,19 +209,19 @@ will use:
 
 ### Theory of Operation: Pixel Format Conversion
 
-Our See3Cam camera from E-Con Systems will provide UYVY data at up to
+Our See3Cam camera from E-Con Systems will provide YUYV data at up to
 1080p resolutions, but to avoid an input scaling step you will configure
-it to provide raw UYVY data at your requested 640x480 resolution. You  then
+it to provide raw YUYV data at your requested 640x480 resolution. You  then
 need to convert that data in memory to RGB data that your neural network
 has been trained to understand.
 
-Fortunately, converting between UYVY and RGB is a simple operation that
+Fortunately, converting between YUYV and RGB is a simple operation that
 works very nicely with the stream-based processing capabilities of an
-FPGA. In memory, the UYVY data is laid out as shown in the following figure, with each value represented by a single byte.
+FPGA. In memory, the YUYV data is laid out as shown in the following figure, with each value represented by a single byte.
 
-![UYVY Memory Layout](./images/yuv_layout.png)
+![YUYV Memory Layout](./images/yuv_layout.png)
 
-Because UYVY is a sparse format you can't convert pixel-by-pixel but rather using a full four-byte word (or, in other words, two pixels to two pixels). The equations for the conversion are as follows:
+Because YUYV is a sparse format you can't convert pixel-by-pixel but rather using a full four-byte word (or, in other words, two pixels to two pixels). The equations for the conversion are as follows:
 
 R_0 = 1.164 * (Y_0 - 16) + 2.018 * (U_0 - 128)
 
@@ -250,7 +250,7 @@ Now that you have a general understanding of the system you will address the "nu
 
 ![Missing Image: Gstreamer](./images/gstreamer.PNG)
 
-Each block in the prior figure will be implemented with a pre-compiled **shared object file**, or **.so**, that defines the interfaces, block behavior, etc. There are many topologies you can implement with SDSoC, but you will implement something like the following where both the UYVY to RGB and DPU functions call into a single hardware-accelerated library. This isolates, to the degree possible, the hardware
+Each block in the prior figure will be implemented with a pre-compiled **shared object file**, or **.so**, that defines the interfaces, block behavior, etc. There are many topologies you can implement with SDSoC, but you will implement something like the following where both the YUYV to RGB and DPU functions call into a single hardware-accelerated library. This isolates, to the degree possible, the hardware
 implementation from the _gstreamer_ implementation. Your full topology will look like the following figure:
 
 ![Missing Image: Gstreamer](./images/gstreamer_full.PNG)
@@ -326,7 +326,7 @@ Ensure that the following projects are selected:
 - dpucore130_1152
 - gstsdxfacedetect
 - gstsdxpedestriandetect
-- gstsdxuyvy2rgb
+- gstsdxcolorconvert
 
 **NOTE:** Also ensure that the "Copy projects into workspace" option is
 selected.
@@ -345,31 +345,31 @@ In the SDx GUI, expand the **dpucore130_1152** project (if it isn't
 already) and double click on the **project.sdx** file to open it.
 
 The dpucore library includes the DPU and its associated software by
-default, but you now need to add your UYVY to RGB function.
+default, but you now need to add your YUYV to RGB function.
 
 1. Right click on the 'src' folder and select **Import**, then **General** -\> **File System**.
 
-2. Browse to the directory **/home/ubuntu/XDF_Labs/SDSoC/lab_files/template** and select the file **uyvy2rgb.cpp**, importing it into the **src** folder of the DPU library.
+2. Browse to the directory **/home/ubuntu/XDF_Labs/SDSoC/lab_files/template** and select the file **colorconvert.cpp**, importing it into the **src** folder of the DPU library.
 
 3. Open the file by double clicking on it.
-   Note that it contains the function to accelerate your UYVY to RGB conversion, called *uyvy2rgb_accel*. However, also note the TODO notice at the bottom. Every accelerated function in SDSoC must have one (or more) **call sites**. In other words, it can't be accelerated in a vacuum, it must be called by something. Add a wrapper around that function (*hint: this is just the same function with a different name, passing its data directly to the uyvy2rgb_accel function*). Something like:
+   Note that it contains the function to accelerate your YUYV to RGB conversion, called *colorconvert_accel*. However, also note the TODO notice at the bottom. Every accelerated function in SDSoC must have one (or more) **call sites**. In other words, it can't be accelerated in a vacuum, it must be called by something. Add a wrapper around that function (*hint: this is just the same function with a different name, passing its data directly to the colorconvert_accel function*). Something like:
 
 ``` {.c frame="lines" framesep="2mm"}
 // Caller for the conversion function
-void uyvy2rgb(uyvy_data *uyvy,
+void yuyv2rgb(yuyv_data *yuyv,
               rgb_data *rgb,
               int height,
               int width)
 {
-    uyvy2rgb_accel(uyvy, rgb, height, width);
+    colorconvert_accel(yuyv, rgb, height, width);
 }
 ```
 
 4. Save the file.
 
-    Your last step is to tell SDx you want to move the *uyvy2rgb_accel* function to hardware. To do that, from the main project page (which can be opened by double clicking on **project.sdx**)
+    Your last step is to tell SDx you want to move the *colorconvert_accel* function to hardware. To do that, from the main project page (which can be opened by double clicking on **project.sdx**)
 
-5. Click on the lightning bolt icon (circled in the following figure) to select hardware functions to accelerate, and choose 'uyvy2rgb_accel' from the list.
+5. Click on the lightning bolt icon (circled in the following figure) to select hardware functions to accelerate, and choose 'colorconvert_accel' from the list.
 
     Please note that when the dialog box opens the source cache is refreshed; EBS network latency can make this process take roughly 30-45 seconds so please wait a moment if the dialog box comes up with an empty list.
 
@@ -407,9 +407,9 @@ Double click on the **gstsdxpedestriandetect** project in the "Project
 Explorer" pane to open it, then click the build icon at the top of the
 screen. This project should build in seconds.
 
-### UYVY to RGB
+### YUYV to RGB
 
-Double click on the **gstsdxuyvy2rgb** project in the "Project Explorer"
+Double click on the **gstsdxcolorconvert** project in the "Project Explorer"
 pane to open it. This project will build similarly quickly, but you have
 to make a quick modification first. Most of a gstreamer plugin is
 boilerplate; code that exists to interoperate with the library but that
@@ -420,20 +420,20 @@ hardware-accelerated function!
 
 The project is already set up to link against the .so file you generated
 earlier, but you don't call the function in the C code. Under the 'src'
-directory of the project open the **gstsdxuyvy2rgb.cpp** file and browse
+directory of the project open the **gstsdxcolorconvert.cpp** file and browse
 to the TODO line (line 121). Here, call the function you defined in the
-hardware library. It should look something like the **uyvy2rgb** function in the following code sample:
+hardware library. It should look something like the **colorconvert** function in the following code sample:
 
 ``` {.c linenos="" frame="lines" framesep="2mm"}
 static GstFlowReturn
-gst_sdx_uyvy2rgb_process_frames(GstSdxBase   * base,
+gst_sdx_colorconvert_process_frames(GstSdxBase   * base,
                                 GstSdxFrame ** in_frames,
                                 GstSdxFrame  * out_frame)
 {
     GstVideoInfo  *info = NULL;
     GstSdxFrame   *in_frame;
     GstVideoFrame *in_vframe, *out_vframe;
-    uyvy_data     *in_data;
+    yuyv_data     *in_data;
     rgb_data      *out_data;
 
     g_return_val_if_fail(in_frames != NULL &&
@@ -441,22 +441,22 @@ gst_sdx_uyvy2rgb_process_frames(GstSdxBase   * base,
 
     in_frame = in_frames[0];
     if (in_frame == NULL) {
-        GST_WARNING_OBJECT (base, "uyvy2rgb input frame is invalid");
+        GST_WARNING_OBJECT (base, "colorconvert input frame is invalid");
         return GST_FLOW_ERROR;
     }
 
     in_vframe  = &in_frame->vframe;
     out_vframe = &out_frame->vframe;
     info       = &out_frame->info;
-    in_data  = (uyvy_data *) GST_VIDEO_FRAME_PLANE_DATA (in_vframe, 0);
+    in_data  = (yuyv_data *) GST_VIDEO_FRAME_PLANE_DATA (in_vframe, 0);
     out_data = (rgb_data *) GST_VIDEO_FRAME_PLANE_DATA (out_vframe, 0);
 
-    // TODO: Add a function call to the UYVY accelerator here
-    uyvy2rgb(in_data, out_data, GST_VIDEO_INFO_HEIGHT (info),
+    // TODO: Add a function call to the YUYV accelerator here
+    yuyv2rgb(in_data, out_data, GST_VIDEO_INFO_HEIGHT (info),
              GST_VIDEO_INFO_WIDTH (info));
     /********************************************************/
 
-    GST_DEBUG_OBJECT(base, "uyvy2rgb input frame processed");
+    GST_DEBUG_OBJECT(base, "colorconvert input frame processed");
 
     return GST_FLOW_OK;
 }
@@ -478,7 +478,7 @@ to copy to an SD card image as follows:
     cp libs/* sd_card/
     cp gstsdxfacedetect/Debug/libgstsdxfacedetect.so sd_card/
     cp gstsdxpedestriandetect/Debug/libgstsdxpedestriandetect.so sd_card/
-    cp gstsdxuyvy2rgb/Debug/libgstsdxuyvy2rgb.so sd_card/
+    cp gstsdxcolorconvert/Debug/libgstsdxcolorconvert.so sd_card/
 
 **NOTE:** If you are using a different workspace than **workspace_prebuilt** then please ensure you use the correct path for the initial 'cd' command.
 
@@ -513,16 +513,6 @@ the boot process.
 Once the board boots, log in with the username **root** and password
 **root**.
 
-Before launching your gstreamer pipeline you need to set the display to
-the desired resolution. By default the Linux kernel will auto-negotiate
-the preferred resolution of your display, which in this case is likely to
-be 1080p. For this design you want to ouput 720p. To force the resolution
-change, enter the following command on the command line.
-
-    modetest -M xlnx -s 38@36:1280x720-60@RG24 -w 35:alpha:1 &
-
-**NOTE** This may seem cryptic, but modetest is a standard Linux application commonly used to force displays to different resolutions or perform other similar DRM/KMS setup tasks:
-
 At this point if you are only interested in seeing the application run
 please run the **facedetect.sh** script from the command prompt:
 
@@ -544,20 +534,28 @@ file system. Run the following commands:
     cp libd* /usr/lib
     cp libgstsdxallocator.so /usr/lib
     cp libgstsdxbase.so /usr/lib
-    cp libgstsdxuyvy2rgb.so \
+    cp libgstsdxcolorconvert.so \
        libgstsdxfacedetect.so \
        /usr/lib/gstreamer-1.0
+
+The DisplayPort controller in the ZU+ devices supports multiple planes. We are
+rendering the video to the "graphics" plane, but the console is on the "overlay"
+plane. To make the overlay plane transparent we can run the modetest command
+as follows (note that this will disable the output on the display; for this reason
+we recommend you run this as part of the shell script instead of manually):
+
+modetest -M xlnx -w 35:alpha:0 &
 
 Finally, you can launch the gstreamer pipeline for face detection:
 
     gst-launch-1.0 \
         v4l2src io-mode=4 ! \
-        video/x-raw,format=UYVY,width=640,height=480,framerate=30/1 ! \
-        sdxuyvy2rgb ! \
+        video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! \
+        sdxcolorconvert ! \
         rawvideoparse format="bgr" width=640 height=480 framerate=30 ! \
         sdxfacedetect ! \
         videoscale ! \
-        video/x-raw,format=BGR,width=1280,height=720 ! \
+        video/x-raw,format=BGR,width=640,height=480 ! \
         kmssink driver-name=xlnx sync=false
 
 You should see output from the webcam piped to the display, with faces
@@ -567,12 +565,12 @@ You can now launch the pedestrian detection similarly:
 
     gst-launch-1.0 \
         v4l2src io-mode=4 ! \
-        video/x-raw,format=UYVY,width=640,height=480,framerate=30/1 ! \
-        sdxuyvy2rgb ! \
+        video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! \
+        sdxcolorconvert ! \
         rawvideoparse format="bgr" width=640 height=480 framerate=30 ! \
         sdxpedestriandetect ! \
         videoscale ! \
-        video/x-raw,format=BGR,width=1280,height=720 ! \
+        video/x-raw,format=BGR,width=640,height=480 ! \
         kmssink driver-name=xlnx sync=false
 
 You should see output from the webcam piped to the display again, with
