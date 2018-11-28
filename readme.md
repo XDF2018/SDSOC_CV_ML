@@ -544,7 +544,7 @@ plane. To make the overlay plane transparent we can run the modetest command
 as follows (note that this will disable the output on the display; for this reason
 we recommend you run this as part of the shell script instead of manually):
 
-modetest -M xlnx -s 38@36:640x480-60@RG24 -w 35:alpha:1 &
+    modetest -M xlnx -s 38@36:640x480-60@RG24 -w 35:alpha:1 &
 
 Finally, you can launch the gstreamer pipeline for face detection:
 
